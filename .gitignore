@@ -11,3 +11,4 @@ wheels/
 
 # Setting files
 config.py
+logs/
