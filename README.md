@@ -38,7 +38,7 @@ uv run main.py
 ```
 
 # About
-This is a work of [AnVuVa](https://github.com/AnVuVa)
+by [AnVuVa](https://github.com/AnVuVa)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
