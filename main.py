@@ -7,7 +7,7 @@ import telebot
 import requests
 import json, time
 
-bot = telebot.TeleBot(API_KEY)
+bot = telebot.TeleBot(API_KEY, threaded=True)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -101,4 +101,6 @@ def new_chat(message):
     state.history = []
     bot.reply_to(message, "Lịch sử cuộc trò chuyện đã được xóa.")
 
-bot.polling()
+if __name__ == "__main__":
+    print("Bot is running 24/7...")
+    bot.infinity_polling(timeout=None, long_polling_timeout=60)
