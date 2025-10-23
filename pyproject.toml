@@ -1,7 +1,7 @@
 [project]
 name = "telbot-vnpt"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Telegram bot using VNPT AI services"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
