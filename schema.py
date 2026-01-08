@@ -1,10 +1,11 @@
-from typing import Optional, Dict, Any
-from pydantic import BaseModel
+from typing import Any, Dict, Optional
 
-class ChatRequest(BaseModel):
-    message: str
-    model: str = "gpt-oss 20B"
-    # customer_data: Optional[Dict[str, Any]] = None
+from pydantic import BaseModel, Field
 
-class State(BaseModel):
-    history: Optional[list] = []
+
+class DifyChatRequest(BaseModel):
+    query: str
+    user: str
+    inputs: Dict[str, Any] = Field(default_factory=dict)
+    response_mode: str = "blocking"
+    conversation_id: Optional[str] = None

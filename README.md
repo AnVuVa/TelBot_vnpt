@@ -1,43 +1,103 @@
 # Telegram Bot
-This work is a part of project VNPT-AI-Agent.
+This repo is a Telegram bot that forwards user messages to Dify and sends the answer back to Telegram.
+It includes a queue with rate limiting and a single-instance lock to avoid Telegram polling conflicts.
 
-The target is to deploy the chatbot into Telegram
+## Pipeline
+`tele_user_input -> dify_api -> answer_to_telegram`
 
-Also, this repo can be reuse for others type of API, as long as it return *Generator class*.
+## Key Features
+- Dify API integration (blocking response mode).
+- Queue + rate limiter (`RATE_PER_SECOND`) with parallel workers.
+- Retry on Dify requests (`MAX_RETRY`).
+- Single-instance lock via `logs/bot.lock`.
+- Structured logging to `logs/`.
 
-## Project Tree
+## Project Structure
 ```
 TELBOT_VNPT/
-├── __pycache__/
-├── .venv/
-├── logs/
-│   ├── .gitignore
-│   ├── .python-version
-│   ├── config.py
-│   ├── log.py
-│   ├── main.py
-│   ├── pyproject.toml
-│   ├── README.md
-│   ├── schema.py
-│   └── uv.lock
-
+|-- app_context.py     # shared bot/queue/rate limiter state
+|-- dify_client.py     # Dify API client with retry
+|-- handlers.py        # Telegram command handlers
+|-- instance_lock.py   # single-instance lock
+|-- log.py             # file logger
+|-- main.py            # app entrypoint
+|-- processor.py       # chat processing pipeline
+|-- queue_worker.py    # worker pool and queue logic
+|-- rate_limiter.py    # rate limiter helper
+|-- schema.py          # request models
+|-- config.py          # runtime config
+|-- pyproject.toml
+|-- README.md
+|-- uv.lock
+`-- logs/
 ```
-## Getting start
+
+## Activity Diagram
+```
+            +----------------------+
+            |       main.py        |
+            |  entrypoint/startup  |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |  instance_lock.py    |
+            |  single instance     |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |   app_context.py     |
+            |  bot/queue/limiter   |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |     handlers.py      |
+            | /start /help /chat   |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |  queue_worker.py     |
+            |  worker pool + rate  |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |    processor.py      |
+            |  chat -> dify call   |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |    dify_client.py    |
+            |   API + retry        |
+            +----------+-----------+
+                       |
+                       v
+            +----------------------+
+            |    Telegram reply    |
+            |   (via bot object)   |
+            +----------------------+
+```
+
+## Getting Started
 ### With uv
-Install uv if you don't install it yet
+Install uv:
 ```
 pip install uv
 ```
-Move to the folder and sync (install the required libraries)
+Sync dependencies:
 ```
 uv sync
 ```
-Run the script
+Run the bot:
 ```
 uv run main.py
 ```
 
-# About
+## About
 by [AnVuVa](https://github.com/AnVuVa)
 
 ## License
