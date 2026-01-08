@@ -26,7 +26,7 @@ def worker():
 
 
 def start_worker_pool(worker_count: int):
-    count = max(1, int(worker_count))
+    count = 1
     for i in range(count):
         thread = threading.Thread(
             target=worker,
